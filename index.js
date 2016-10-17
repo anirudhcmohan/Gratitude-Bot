@@ -4,6 +4,7 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const request = require('request')
 const app = express()
+var my_token = '&sXd7qzy4P>wpK'
 
 app.set('port', (process.env.PORT || 5000))
 
@@ -20,7 +21,7 @@ app.get('/', function (req, res) {
 
 // for Facebook verification
 app.get('/webhook/', function (req, res) {
-    if (req.query['hub.verify_token'] === 'my_voice_is_my_password_verify_me') {
+    if (req.query['hub.verify_token'] === my_token) {
         res.send(req.query['hub.challenge'])
     }
     res.send('Error, wrong token')
