@@ -30,11 +30,11 @@ app.get('/', function (req, res) {
 })
 
 // Facebook verification
-app.get('/webhook', facebook_parser.facebookVerification)
+app.get('/webhook/', facebook_parser.facebookVerification)
 
 
 // Post data from Facebook Messenger -- i.e. messages to bot from a user
-app.post('/webhook/', facebook_parser.facebookWebhookListener);
+app.post('/webhook/', facebook_parser.facebookWebhookListener)
 
 
 // app.post('/webhook/', function (req, res) {
