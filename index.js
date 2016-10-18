@@ -3,10 +3,15 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const request = require('request')
-const app = express()
-let my_token = '&sXd7qzy4P>wpK'
+const mongoose = require('mongoose');
+const User = mongoose.model('User', {_id: String, name: String, profile_image_url: String, phone_number: String, current_state: String, startTime:Date});
 
-app.set('port', (process.env.PORT || 5000))
+
+const app = express()
+
+const my_token = '&sXd7qzy4P>wpK'
+
+app.set('port', (process.env.PORT || 8000))
 
 // Process application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({extended: false}))
@@ -39,6 +44,7 @@ app.post('/webhook/', function (req, res) {
         let sender = event.sender.id
         if (event.message && event.message.text) {
             let text = event.message.text
+            console.log('successfully echoed!');
             sendTextMessage(sender, "Text received, echo: " + text.substring(0, 200))
         }
     }
