@@ -2,21 +2,23 @@
 
 const express = require('express')
 const bodyParser = require('body-parser')
-// var mongoose = require('mongoose');
+var mongoose = require('mongoose');
 const app = express()
 var facebook_parser = require('./utils/bot_utils.js')
 
 app.set('port', (process.env.PORT || 3000))
-// const MONGO_HOST = (process.env.MONGO_HOST || 'localhost');
-// app.set('mongo_url', (process.env.MONGODB_URL || 'mongodb://'+MONGO_HOST+'/local'));
+const MONGO_HOST = (process.env.MONGO_HOST || 'localhost');
+app.set('mongo_url', (process.env.MONGODB_URL || 'mongodb://'+MONGO_HOST+'/local'));
 
-// mongoose.connect(app.get('mongo_url'),function(err){
-// 	if (err) {
-// 		console.error(err);
-// 		process.exit(1);
-// 	}
-// 	console.log("Connected to " + app.get('mongo_url'));
-// });
+// Configure the Mongo app
+
+mongoose.connect(app.get('mongo_url'),function(err){
+	if (err) {
+		console.error(err);
+		process.exit(1);
+	}
+	console.log("Connected to " + app.get('mongo_url'));
+});
 
 
 // Process application/json

@@ -30,12 +30,33 @@ function facebookWebhookListener(req, res){
 	console.log(req.body)
 	let messaging_events = req.body.entry[0].messaging
 	for (let messagingItem of messaging_events){
-		let user_id = messagingItem.sender.id
+		let user_id = messagingItem.sender.id		
 		console.log(messagingItem)
-		let messageText = "Echo: " + messagingItem.message.text.substring(0, 200)		
-		parseIncomingMSGSession(user_id, messageText)
+		getUserProfile(user_id, messagingItem);
+		// console.log(user_prof, messagingItem)
+		// let messageText = "Hi " + user_prof.first_name + ". Echo: " + messagingItem.message.text.substring(0, 200)		
+		// let messageText = "Echo: " + messagingItem.message.text.substring(0, 200)		
+		// parseIncomingMSGSession(user_id, messageText)
 	}
 	res.sendStatus(200);
+}
+
+// Get user specific information
+
+function getUserProfile (user_id, messagingItem){
+	request({
+		url: "https://graph.facebook.com/v2.6/"+user_id,
+		qs: {access_token: PAGE_TOKEN},
+		method: 'GET'
+
+	}, function(error, response, body){
+		if(error){
+			console.log(error);
+		} else {
+			let messageText = "Hi " + JSON.parse(body).first_name + ". Echo: " + messagingItem.message.text.substring(0, 200)
+			parseIncomingMSGSession(user_id, messageText)
+		}
+	});
 }
 
 // Parses incoming messages
