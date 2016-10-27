@@ -65,12 +65,12 @@ function parseIncomingMSGSession (user_id, messagingItem, name){
 		console.log("About to send this message " + send_message)
 		sendFacebookMessage(user_id, send_message)
 	}
-	else if (received_message.split(" ")[0]==="time")
+	else if (received_message.split(" ").slice(0,2).join(" ")==="set time")
 	{
-		var hour = received_message.split(" ")[1]
-		var minute = received_message.split(" ")[2]
+		var hour = received_message.split(" ")[2].split(":")[0]
+		var minute = received_message.split(" ")[2].split(":")[1]
 		db_utils.setRecTime(user_id, hour, minute)
-		send_message = "Awesome! Your new receive time is " + hour + " " + minute
+		send_message = "Awesome! Your new receive time is " + hour + ":" + minute
 		console.log("About to send this message " + send_message)
 		sendFacebookMessage(user_id, send_message)
 	}
@@ -78,7 +78,7 @@ function parseIncomingMSGSession (user_id, messagingItem, name){
 	{
 		var rec_timePromise = db_utils.getRecTime(user_id)
 		rec_timePromise.then(function(rec_time){
-			send_message = "The current receive time is " + rec_time['hour'] + " " + rec_time['minute']
+			send_message = "The current receive time is " + rec_time['hour'] + ":" + rec_time['minute']
 			console.log("About to send this message " + send_message)
 			sendFacebookMessage(user_id, send_message)
 		}, function (err){
