@@ -1,0 +1,24 @@
+TODO List
+
+# Get user specific information to greet -- COMPLETED
+
+# Search whether user is new -- COMPLETED
+## If so, create new record -- COMPLETED
+## If not, don't. -- COMPLETED
+
+
+# Be able to update reminder time -- COMPLETED
+
+# Get reminder time -- COMPLETED
+
+# Format reminder time nicely in get and set
+
+# Be able to send messages from a specified time
+
+# Introduce schema to store entries
+
+
+
+
+
+

@@ -2,7 +2,7 @@
 
 const express = require('express')
 const request = require('request')
-// const db_utils = require('./db_utils.js');
+const db_utils = require('./db_utils.js');
 
 const PAGE_TOKEN = "EAAZAyQZB2isvkBAKyiiwBj2H0iMxMKMENpGHdFtLnG9cOaZB7MtCBsUcX9VEOvH3HmOljVBRQmpUIyavm2JDLtBZASgOLg4f9glvqy8ZBIsZCD8LjDXKCtZCz2XVv3HPkHYfXinhBwfp3Q9afDEwznNuZAZCDzecdEFtMZAqWwSwxCYQZDZD";
 
@@ -33,17 +33,13 @@ function facebookWebhookListener(req, res){
 		let user_id = messagingItem.sender.id		
 		console.log(messagingItem)
 		getUserProfile(user_id, messagingItem);
-		// console.log(user_prof, messagingItem)
-		// let messageText = "Hi " + user_prof.first_name + ". Echo: " + messagingItem.message.text.substring(0, 200)		
-		// let messageText = "Echo: " + messagingItem.message.text.substring(0, 200)		
-		// parseIncomingMSGSession(user_id, messageText)
 	}
 	res.sendStatus(200);
 }
 
 // Get user specific information
 
-function getUserProfile (user_id, messagingItem){
+function getUserProfile(user_id, messagingItem){
 	request({
 		url: "https://graph.facebook.com/v2.6/"+user_id,
 		qs: {access_token: PAGE_TOKEN},
@@ -53,16 +49,49 @@ function getUserProfile (user_id, messagingItem){
 		if(error){
 			console.log(error);
 		} else {
-			let messageText = "Hi " + JSON.parse(body).first_name + ". Echo: " + messagingItem.message.text.substring(0, 200)
-			parseIncomingMSGSession(user_id, messageText)
+			db_utils.doesUserExist(user_id);
+			parseIncomingMSGSession(user_id, messagingItem, JSON.parse(body).first_name);
 		}
 	});
 }
 
 // Parses incoming messages
 
-function parseIncomingMSGSession (user_id, messageText){
-	sendFacebookMessage(user_id, messageText)
+function parseIncomingMSGSession (user_id, messagingItem, name){
+	let received_message = messagingItem.message.text
+	let send_message = ""
+	if (received_message === "hi" ) {
+		send_message = "Hi back " + name + ". Echo: " + received_message
+		console.log("About to send this message " + send_message)
+		sendFacebookMessage(user_id, send_message)
+	}
+	else if (received_message.split(" ")[0]==="time")
+	{
+		var hour = received_message.split(" ")[1]
+		var minute = received_message.split(" ")[2]
+		db_utils.setRecTime(user_id, hour, minute)
+		send_message = "Awesome! Your new receive time is " + hour + " " + minute
+		console.log("About to send this message " + send_message)
+		sendFacebookMessage(user_id, send_message)
+	}
+	else if (received_message === "get time")
+	{
+		var rec_timePromise = db_utils.getRecTime(user_id)
+		rec_timePromise.then(function(rec_time){
+			send_message = "The current receive time is " + rec_time['hour'] + " " + rec_time['minute']
+			console.log("About to send this message " + send_message)
+			sendFacebookMessage(user_id, send_message)
+		}, function (err){
+			console.log("A big error!!!");
+		})
+	}
+	else {
+		send_message = "Just gonna echo: " + received_message
+		console.log("About to send this message " + send_message)
+		sendFacebookMessage(user_id, send_message)
+	}
+	
+	
 }
 
 // Sends a text-based message back to the user
@@ -90,7 +119,6 @@ function facebookCallbackResponse(error, response, body){
 }
 
 module.exports = {
-	sendFacebookMessage:sendFacebookMessage,
 	facebookVerification:facebookVerification,
 	facebookWebhookListener:facebookWebhookListener
 };
