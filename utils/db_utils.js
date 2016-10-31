@@ -10,11 +10,17 @@ var userSchema = new Schema({
 	name: String,
 	rec_time: {hour: Number, minute: Number},
 	entries: [Schema.Types.ObjectId]
+},
+{
+	timestamps: true
 });
 
 var entrySchema = new Schema({
 	text: String,
 	user_id: String
+},
+{
+	timestamps: true
 })
 
 const User = mongoose.model('User', userSchema);
@@ -75,7 +81,7 @@ function createEntry(user_id, entryText){
 
 // Create a new user record
 
-function getAndSetNewUser(user_id, rec_time_entry, name_entry, entryID){
+function getAndSetNewUser(user_id, rec_time_entry, name_entry, entryID_entry){
 	var name_entry = (typeof name_entry !== 'undefined') ?  name_entry : "";
 
 	var rec_time_entry = (typeof rec_time_entry !== 'undefined') ?  rec_time_entry : {};
@@ -148,9 +154,12 @@ function getRecTime(user_id){
 
 // Get journal entries
 
-function getEntries(user_id){
+function getEntries(user_id, limitNum){
+
+	var limitNum = (typeof limitNum !== 'undefined') ?  limitNum : 10;
+
 	return new Promise(function(resolve, reject){
-		Entry.find({"user_id": user_id}, function(err, entries){
+		Entry.find({"user_id": user_id}).sort('-createdAt').limit(limitNum).exec(function(err, entries){
 			if (err){
 				reject(err);
 			}
