@@ -120,5 +120,6 @@ function facebookCallbackResponse(error, response, body){
 
 module.exports = {
 	facebookVerification:facebookVerification,
-	facebookWebhookListener:facebookWebhookListener
+	facebookWebhookListener:facebookWebhookListener,
+	sendFacebookMessage:sendFacebookMessage
 };

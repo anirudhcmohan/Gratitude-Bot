@@ -5,6 +5,8 @@ const bodyParser = require('body-parser')
 var mongoose = require('mongoose');
 const app = express()
 var facebook_parser = require('./utils/bot_utils.js')
+var recurring_tasks = require('./utils/recur_utils.js')
+
 
 app.set('port', (process.env.PORT || 3000))
 const MONGO_HOST = (process.env.MONGO_HOST || 'localhost');
@@ -38,6 +40,8 @@ app.get('/webhook/', facebook_parser.facebookVerification)
 // Post data from Facebook Messenger -- i.e. messages to bot from a user
 app.post('/webhook/', facebook_parser.facebookWebhookListener)
 
+
+recurring_tasks.recurTask()
 
 // Spin up the server
 app.listen(app.get('port'), function() {
