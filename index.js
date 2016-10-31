@@ -9,8 +9,10 @@ var recurring_tasks = require('./utils/recur_utils.js')
 
 
 app.set('port', (process.env.PORT || 3000))
+
 const MONGO_HOST = (process.env.MONGO_HOST || 'localhost');
-app.set('mongo_url', (process.env.MONGODB_URL || 'mongodb://'+MONGO_HOST+'/local'));
+
+app.set('mongo_url', (process.env.MONGOLAB_URI || 'mongodb://'+MONGO_HOST+'/local'));
 
 // Configure the Mongo app
 
