@@ -8,10 +8,18 @@ var Schema = mongoose.Schema;
 var userSchema = new Schema({
 	_id : String,
 	name: String,
-	rec_time: {hour: Number, minute: Number}
+	rec_time: {hour: Number, minute: Number},
+	entries: [Schema.Types.ObjectId]
 });
 
+var entrySchema = new Schema({
+	text: String
+})
+
 const User = mongoose.model('User', userSchema);
+const Entry = mongoose.model('Entry', entrySchema)
+
+// Check if user exists
 
 function doesUserExist(user_id){
 	User.findById(user_id, function(err, userObj){
@@ -31,22 +39,53 @@ function doesUserExist(user_id){
 	})
 }
 
-// TODO: Function for deleting a user
+// Create a new entry
 
+function createEntry(user_id, entryText){
+	var entry = new Entry({
+		"text": entryText
+	})
+
+	var entryID = entry._id
+
+	entry.save(function (err, entryObj){
+		if (err){
+			console.log(err);
+		}
+		else {
+			console.log("New entry "+entry._id +" saved with text: "+ entryText)
+		}
+	})
+
+	User.findById(user_id, function(err, userObj){
+		if(err){
+			console.log(err);
+		}
+		else if (userObj){
+			userObj.entries.push(entryID);
+		}
+		else{
+			getAndSetNewUser(user_id, {},"",entryID)
+		}
+	})
+}
 
 
 // Create a new user record
 
-function getAndSetNewUser(user_id, rec_time_entry, name_entry){
+function getAndSetNewUser(user_id, rec_time_entry, name_entry, entryID){
 	var name_entry = (typeof name_entry !== 'undefined') ?  name_entry : "";
 
 	var rec_time_entry = (typeof rec_time_entry !== 'undefined') ?  rec_time_entry : {};
+
+	var entryID_entry = (typeof entryID_entry !== 'undefined') ?  entryID_entry : null;
 
 
 	var user = new User({
 		"_id": user_id,
 		"name": name_entry,
-		rec_time: rec_time_entry
+		"rec_time": rec_time_entry,
+		"entries":[entryID_entry]
 	});
 
 	user.save(function (err, userObj) {
@@ -113,5 +152,6 @@ function getRecTime(user_id){
 module.exports = {
     doesUserExist:doesUserExist,
     setRecTime:setRecTime,
-    getRecTime:getRecTime
+    getRecTime:getRecTime,
+    createEntry:createEntry
 };

@@ -87,6 +87,7 @@ function parseIncomingMSGSession (user_id, messagingItem, name){
 	}
 	else {
 		send_message = "Just gonna echo: " + received_message
+		db_utils.createEntry(user_id, received_message)
 		console.log("About to send this message " + send_message)
 		sendFacebookMessage(user_id, send_message)
 	}
