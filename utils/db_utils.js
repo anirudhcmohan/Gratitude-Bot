@@ -84,7 +84,7 @@ function createEntry(user_id, entryText){
 function getAndSetNewUser(user_id, rec_time_entry, name_entry, entryID_entry){
 	var name_entry = (typeof name_entry !== 'undefined') ?  name_entry : "";
 
-	var rec_time_entry = (typeof rec_time_entry !== 'undefined') ?  rec_time_entry : {};
+	var rec_time_entry = (typeof rec_time_entry !== 'undefined') ?  rec_time_entry : {"hour":8,"minute":30};
 
 	var entryID_entry = (typeof entryID_entry !== 'undefined') ?  entryID_entry : null;
 
@@ -152,6 +152,27 @@ function getRecTime(user_id){
 	});
 }
 
+// Get all users
+
+function getUsers(){
+	return new Promise(function(resolve, reject){
+		User.find({}, function(err, users){
+			if (err){
+				reject(err);
+			}
+			else if (users){
+				var userMap = {};
+    			users.forEach(function(user) {
+      				userMap[user._id] = user;
+    			});
+				resolve(userMap);
+			}
+			else {
+				resolve(null);
+			}			
+		})
+	})
+}
 // Get journal entries
 
 function getEntries(user_id, limitNum){
@@ -187,5 +208,6 @@ module.exports = {
     setRecTime:setRecTime,
     getRecTime:getRecTime,
     createEntry:createEntry,
-    getEntries:getEntries
+    getEntries:getEntries,
+    getUsers:getUsers
 };
