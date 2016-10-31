@@ -14,6 +14,8 @@ const MONGO_HOST = (process.env.MONGO_HOST || 'localhost');
 
 app.set('mongo_url', (process.env.MONGOLAB_URI || 'mongodb://'+MONGO_HOST+'/local'));
 
+console.log(app.get('mongo_url'))
+
 // Configure the Mongo app
 
 mongoose.connect(app.get('mongo_url'),function(err){
