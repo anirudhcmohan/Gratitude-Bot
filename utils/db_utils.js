@@ -13,7 +13,8 @@ var userSchema = new Schema({
 });
 
 var entrySchema = new Schema({
-	text: String
+	text: String,
+	user_id: String
 })
 
 const User = mongoose.model('User', userSchema);
@@ -39,11 +40,12 @@ function doesUserExist(user_id){
 	})
 }
 
-// Create a new entry
+// Create a new journal entry
 
 function createEntry(user_id, entryText){
 	var entry = new Entry({
-		"text": entryText
+		"text": entryText,
+		"user_id": user_id
 	})
 
 	var entryID = entry._id
@@ -144,6 +146,28 @@ function getRecTime(user_id){
 	});
 }
 
+// Get journal entries
+
+function getEntries(user_id){
+	return new Promise(function(resolve, reject){
+		Entry.find({"user_id": user_id}, function(err, entries){
+			if (err){
+				reject(err);
+			}
+			else if (entries){
+				console.log("retrieved entries "+ entries);
+				var entryTexts = entries.map(function(entry){
+					return entry.text
+				});	
+				resolve(entryTexts);
+			}
+			else {
+				resolve(null);
+			}
+		})		
+	});
+}
+
 // Notes from Yang
 // Promise.race() -- pass 2 promise objects and returns one that wins race
 // Promise.all() -- runs promises in parallel and resolves only if all promises resolve
@@ -153,5 +177,6 @@ module.exports = {
     doesUserExist:doesUserExist,
     setRecTime:setRecTime,
     getRecTime:getRecTime,
-    createEntry:createEntry
+    createEntry:createEntry,
+    getEntries:getEntries
 };

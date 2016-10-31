@@ -85,6 +85,14 @@ function parseIncomingMSGSession (user_id, messagingItem, name){
 			console.log("A big error!!!");
 		})
 	}
+	else if (received_message === "get entries"){
+		var entriesPromise = db_utils.getEntries(user_id)
+		entriesPromise.then(function(entries){
+			send_message = "All previous entries are " + entries.join(";")
+			console.log("All previous entries are " + entries.join(";"))
+			sendFacebookMessage(user_id, send_message)
+		})
+	}
 	else {
 		send_message = "Just gonna echo: " + received_message
 		db_utils.createEntry(user_id, received_message)
