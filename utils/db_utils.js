@@ -198,6 +198,33 @@ function getEntries(user_id, limitNum){
 	});
 }
 
+// Get a random journal entry
+
+function getRandomEntry(user_id){
+
+	return new Promise(function(resolve, reject){
+		Entry.count().exec(function(err, count){
+		var random = Math.floor(Math.random() * count);
+
+		Entry.findOne({"user_id": user_id}).skip(random).exec(
+		    function (err, result) {
+		    if (err){
+				reject(err);
+			}
+			else if (result){
+				console.log("Random entry is "+ result);
+				resolve(result.text);
+			}
+			else {
+				resolve(null);
+			}			
+
+		});
+
+		});
+	});
+}
+
 // Clear entries (only for special use!)
 
 function deleteEntries(user_id){
@@ -221,5 +248,6 @@ module.exports = {
     createEntry:createEntry,
     getEntries:getEntries,
     getUsers:getUsers,
-    deleteEntries:deleteEntries
+    deleteEntries:deleteEntries,
+    getRandomEntry:getRandomEntry
 };

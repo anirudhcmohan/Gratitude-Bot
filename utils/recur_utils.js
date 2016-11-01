@@ -3,8 +3,8 @@ const db_utils = require('./db_utils.js');
 const schedule = require('node-schedule')
 
 var rule = new schedule.RecurrenceRule();
-rule.hour = 11;
-rule.minute = 27;
+rule.hour = 16;
+rule.minute = 0;
 
 // rule.second = [0, 30];
 
@@ -19,17 +19,32 @@ function recurTask(){
 				var minute = users[id].rec_time['minute']
 				console.log(users[id].rec_time['hour'])
 
-				var userRule = new schedule.RecurrenceRule();
-				userRule.hour = hour
-				userRule.minute = minute
+				var userReminderRule = new schedule.RecurrenceRule();
+				userReminderRule.hour = hour
+				userReminderRule.minute = minute
 
-				// userRule.second = [0,10,20,30,40,50]
+				var userRandomMessageRule = new schedule.RecurrenceRule();
+
+				userRandomMessageRule.hour = Math.floor(Math.random()*23)
+
+				// userReminderRule.second = [0,10,20,30,40,50]
 				// Adding 1 day in MS
 
 
-				var user_send = schedule.scheduleJob({end: new Date(Date.now() + 86400000), rule: userRule}, function(){
-					console.log("Test! Id is: " + id + " and displaying a reminder")
-					facebook_parser.sendFacebookMessage(id,"Reminder to type in your entries!")
+				var userReminderSend = schedule.scheduleJob({end: new Date(Date.now() + 86400000), rule: userReminderRule}, function(){
+						console.log("Test! Id is: " + id + " and displaying a reminder")
+						facebook_parser.sendFacebookMessage(id,"Reminder to type in what you're grateful for!")
+				})
+
+				var userMessageSend = schedule.scheduleJob({end: new Date(Date.now() + 86400000), rule: userRandomMessageRule}, function(){
+						// Extract and send a random past message
+						var userMessagePromise = db_utils.getRandomEntry()
+						userMessagePromise.then(function(message){
+							console.log("Sending a message from the past at a random time!!")
+							facebook_parser.sendFacebookMessage(id,"Here's something from the past you were grateful for: "+message)
+						}, function(err){
+							console.log(err)
+						})
 				})
 			}
 		}, function(err){

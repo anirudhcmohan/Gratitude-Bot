@@ -8,6 +8,8 @@ const PAGE_TOKEN = "EAAZAyQZB2isvkBAKyiiwBj2H0iMxMKMENpGHdFtLnG9cOaZB7MtCBsUcX9V
 
 const WEBHOOK_TOKEN = "a_test_token";
 
+const HELP_MESSAGE = "-get entries: See all your past entries\n-get time: See your daily reminder is (8:00PM by default)\n-set time: Set a new reminder time\n\nType in anything else, and I'll automatically add it as something you're grateful for for the day\n\nP.S. type in 'help' at any time to bring this up again"
+
 // Verifies this is the appropriate server to talk to bot
 
 function facebookVerification(req, res){
@@ -106,8 +108,14 @@ function parseIncomingMSGSession (user_id, messagingItem, name){
 		sendFacebookMessage(user_id, send_message)
 	}
 	else if (received_message == "USER_DEFINED_PAYLOAD"){
-		send_message = "Welcome " + name + "! This is a bot to help you practice a bit more gratitude in your life. Here's what you can do..."
-		sendFacebookMessage(user_id, send_message)	
+		send_message = "Welcome " + name + "! \n\nThis is a bot to help you practice a bit more gratitude in your life. Here's what you can type in:"
+		sendFacebookMessage(user_id, send_message)
+		sendFacebookMessage(user_id, HELP_MESSAGE+"\n\n Enjoy being grateful!")	
+	}
+	else if (received_message === "help"){
+		console.log("Showing help");
+		send_message = HELP_MESSAGE;
+		sendFacebookMessage(user_id, send_message)
 	}
 	else {
 		send_message = "Just gonna echo: " + received_message
