@@ -14,12 +14,14 @@ const MONGO_HOST = (process.env.MONGO_HOST || 'localhost');
 
 app.set('mongo_url', (process.env.MONGOLAB_URI || 'mongodb://'+MONGO_HOST+'/local'));
 
+console.log(process.env.MONGOLAB_URI)
 console.log(app.get('mongo_url'))
 
 // Configure the Mongo app
 
 mongoose.connect(app.get('mongo_url'),function(err){
 	if (err) {
+		console.log("whoops error");
 		console.error(err);
 		process.exit(1);
 	}
