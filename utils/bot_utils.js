@@ -58,8 +58,14 @@ function getUserProfile(user_id, messagingItem){
 // Parses incoming messages
 
 function parseIncomingMSGSession (user_id, messagingItem, name){
-	let received_message = messagingItem.message.text
 	let send_message = ""
+	let received_message = ""
+	if (messagingItem.postback){
+		received_message = messagingItem.postback.payload
+	}
+	else {
+		received_message = messagingItem.message.text	
+	}
 	if (received_message === "hi" ) {
 		send_message = "Hi back " + name + ". Echo: " + received_message
 		console.log("About to send this message " + send_message)
@@ -86,12 +92,22 @@ function parseIncomingMSGSession (user_id, messagingItem, name){
 		})
 	}
 	else if (received_message === "get entries"){
-		var entriesPromise = db_utils.getEntries(user_id,4)
+		var entriesPromise = db_utils.getEntries(user_id,10)
 		entriesPromise.then(function(entries){
 			send_message = "All previous entries are: " + entries.join(";")
 			console.log("All previous entries are: " + entries.join(";"))
 			sendFacebookMessage(user_id, send_message)
 		})
+	}
+	else if (received_message === "delete all my entries"){
+		db_utils.deleteEntries(user_id);
+		console.log("Deleted all user entries");
+		send_message = "Deleted all the user entries";
+		sendFacebookMessage(user_id, send_message)
+	}
+	else if (received_message == "USER_DEFINED_PAYLOAD"){
+		send_message = "Welcome " + name + "! This is a bot to help you practice a bit more gratitude in your life. Here's what you can do..."
+		sendFacebookMessage(user_id, send_message)	
 	}
 	else {
 		send_message = "Just gonna echo: " + received_message

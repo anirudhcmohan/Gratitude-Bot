@@ -198,6 +198,17 @@ function getEntries(user_id, limitNum){
 	});
 }
 
+// Clear entries (only for special use!)
+
+function deleteEntries(user_id){
+	Entry.remove({"user_id":user_id}, function(err) {
+		if(err) console.log(err);
+	});
+	User.update({"_id":user_id}, {"entries":[]},function(err, response){
+		if(err) console.log(err);
+	})
+}
+
 // Notes from Yang
 // Promise.race() -- pass 2 promise objects and returns one that wins race
 // Promise.all() -- runs promises in parallel and resolves only if all promises resolve
@@ -209,5 +220,6 @@ module.exports = {
     getRecTime:getRecTime,
     createEntry:createEntry,
     getEntries:getEntries,
-    getUsers:getUsers
+    getUsers:getUsers,
+    deleteEntries:deleteEntries
 };

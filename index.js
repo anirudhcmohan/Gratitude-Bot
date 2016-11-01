@@ -6,7 +6,7 @@ var mongoose = require('mongoose');
 const app = express()
 var facebook_parser = require('./utils/bot_utils.js')
 var recurring_tasks = require('./utils/recur_utils.js')
-var http = require("http");
+var https = require("https");
 
 
 
@@ -29,7 +29,6 @@ mongoose.connect(app.get('mongo_url'),function(err){
 	}
 	console.log("Connected to " + app.get('mongo_url'));
 });
-
 
 // Process application/json
 app.use(bodyParser.json())
@@ -59,5 +58,5 @@ app.listen(app.get('port'), function() {
 // Keep heroku app alive
 
 setInterval(function() {
-    http.get("https://boiling-mesa-49393.herokuapp.com");
+    https.get("https://boiling-mesa-49393.herokuapp.com");
 }, 300000); // every 5 minutes (300000)

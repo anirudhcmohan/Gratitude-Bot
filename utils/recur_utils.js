@@ -26,6 +26,7 @@ function recurTask(){
 				// userRule.second = [0,10,20,30,40,50]
 				// Adding 1 day in MS
 
+
 				var user_send = schedule.scheduleJob({end: new Date(Date.now() + 86400000), rule: userRule}, function(){
 					console.log("Test! Id is: " + id + " and displaying a reminder")
 					facebook_parser.sendFacebookMessage(id,"Reminder to type in your entries!")
@@ -36,6 +37,7 @@ function recurTask(){
 		})
 
 	})
+
 }
 
 module.exports = {
