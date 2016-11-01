@@ -4,7 +4,7 @@ const schedule = require('node-schedule')
 
 var rule = new schedule.RecurrenceRule();
 rule.hour = 11;
-rule.minute = 21;
+rule.minute = 27;
 
 // rule.second = [0, 30];
 
