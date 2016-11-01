@@ -3,8 +3,8 @@ const db_utils = require('./db_utils.js');
 const schedule = require('node-schedule')
 
 var rule = new schedule.RecurrenceRule();
-rule.hour = 16;
-rule.minute = 0;
+rule.hour = 17;
+rule.minute = 3;
 
 // rule.second = [0, 30];
 
@@ -27,8 +27,8 @@ function recurTask(){
 
 				// userRandomMessageRule.hour = Math.floor(Math.random()*23)
 
-				userRandomMessageRule.hour = 16;
-				userRandomMessageRule.minute = 3;
+				userRandomMessageRule.hour = 17;
+				userRandomMessageRule.minute = 5;
 
 				// userReminderRule.second = [0,10,20,30,40,50]
 				// Adding 1 day in MS
@@ -44,7 +44,7 @@ function recurTask(){
 						var userMessagePromise = db_utils.getRandomEntry()
 						userMessagePromise.then(function(message){
 							console.log("Sending a message from the past at a random time!!")
-							facebook_parser.sendFacebookMessage(id,"Here's something from the past you were grateful for: "+message)
+							facebook_parser.sendFacebookMessage(id,"Here's something from the past you were grateful for: "+ message)
 						}, function(err){
 							console.log(err)
 						})

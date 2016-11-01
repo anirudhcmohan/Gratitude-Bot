@@ -203,15 +203,16 @@ function getEntries(user_id, limitNum){
 function getRandomEntry(user_id){
 
 	return new Promise(function(resolve, reject){
-		Entry.count().exec(function(err, count){
+		Entry.count({"user_id": user_id}).exec(function(err, count){
 		var random = Math.floor(Math.random() * count);
+		console.log("Count of entries is "+ count);
 
 		Entry.findOne({"user_id": user_id}).skip(random).exec(
 		    function (err, result) {
 		    if (err){
 				reject(err);
 			}
-			else if (result){
+			else if(result){
 				console.log("Random entry is "+ result);
 				resolve(result.text);
 			}

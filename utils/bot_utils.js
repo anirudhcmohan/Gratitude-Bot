@@ -94,7 +94,7 @@ function parseIncomingMSGSession (user_id, messagingItem, name){
 		})
 	}
 	else if (received_message === "get entries"){
-		var entriesPromise = db_utils.getEntries(user_id,10)
+		var entriesPromise = db_utils.getEntries(user_id)
 		entriesPromise.then(function(entries){
 			send_message = "All previous entries are:\n\n" + entries.join("\n")
 			console.log("All previous entries are: " + entries.join("\n"))
@@ -116,6 +116,15 @@ function parseIncomingMSGSession (user_id, messagingItem, name){
 		console.log("Showing help");
 		send_message = HELP_MESSAGE;
 		sendFacebookMessage(user_id, send_message)
+	}
+	// For debugging only -- pull random entry
+	else if (received_message === "ENTRYRANDOM123"){
+		var randomEntryPromise = db_utils.getRandomEntry(user_id)
+		randomEntryPromise.then(function(randomEntry){
+			sendFacebookMessage(user_id, "Random entry " + randomEntry)
+		}, function(err){
+			console.log(err)
+		})
 	}
 	else {
 		send_message = "Just gonna echo: " + received_message
