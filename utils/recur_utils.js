@@ -25,7 +25,10 @@ function recurTask(){
 
 				var userRandomMessageRule = new schedule.RecurrenceRule();
 
-				userRandomMessageRule.hour = Math.floor(Math.random()*23)
+				// userRandomMessageRule.hour = Math.floor(Math.random()*23)
+
+				userRandomMessageRule.hour = 16;
+				userRandomMessageRule.minute = 3;
 
 				// userReminderRule.second = [0,10,20,30,40,50]
 				// Adding 1 day in MS
