@@ -3,8 +3,8 @@ const db_utils = require('./db_utils.js');
 const schedule = require('node-schedule')
 
 var rule = new schedule.RecurrenceRule();
-rule.hour = 1;
-rule.minute = 0;
+rule.hour = 11;
+rule.minute = 21;
 
 // rule.second = [0, 30];
 

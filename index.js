@@ -6,6 +6,8 @@ var mongoose = require('mongoose');
 const app = express()
 var facebook_parser = require('./utils/bot_utils.js')
 var recurring_tasks = require('./utils/recur_utils.js')
+var http = require("http");
+
 
 
 app.set('port', (process.env.PORT || 3000))
@@ -54,3 +56,8 @@ app.listen(app.get('port'), function() {
     console.log('Facebook Messenger Bot server started on port', app.get('port'))
 })
 
+// Keep heroku app alive
+
+setInterval(function() {
+    http.get("https://boiling-mesa-49393.herokuapp.com");
+}, 300000); // every 5 minutes (300000)
