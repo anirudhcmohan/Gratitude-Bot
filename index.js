@@ -12,9 +12,9 @@ app.set('port', (process.env.PORT || 3000))
 
 const MONGO_HOST = (process.env.MONGO_HOST || 'localhost');
 
-app.set('mongo_url', (process.env.MONGOLAB_URI || 'mongodb://'+MONGO_HOST+'/local'));
+app.set('mongo_url', (process.env.MONGODB_URI || 'mongodb://'+MONGO_HOST+'/local'));
 
-console.log(process.env.MONGOLAB_URI)
+console.log(process.env.MONGODB_URI)
 console.log(app.get('mongo_url'))
 
 // Configure the Mongo app
