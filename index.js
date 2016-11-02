@@ -7,6 +7,7 @@ const app = express()
 var facebook_parser = require('./utils/bot_utils.js')
 var recurring_tasks = require('./utils/recur_utils.js')
 var https = require("https");
+const path = require('path')
 
 
 
@@ -38,11 +39,17 @@ app.use(bodyParser.urlencoded({extended: false}))
 
 // Index route via HTTP
 app.get('/', function (req, res) {
-    res.send('<h1>Hello world, I am a chat bot</h1>')
+    res.send('<h1>Hello world, I am Gratitude_Bot, a Messenger chatbot.</h1>')
 })
 
 // Facebook verification
 app.get('/webhook/', facebook_parser.facebookVerification)
+
+// Privacy policy
+
+app.get('/privacy', function(req, res){
+	res.sendFile(path.join(__dirname+'/privacy.html'))
+})
 
 // Post data from Facebook Messenger -- i.e. messages to bot from a user
 app.post('/webhook/', facebook_parser.facebookWebhookListener)
