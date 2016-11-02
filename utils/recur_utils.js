@@ -4,7 +4,7 @@ const schedule = require('node-schedule')
 
 var rule = new schedule.RecurrenceRule();
 rule.hour = 17;
-rule.minute = 3;
+rule.minute = 19;
 
 // rule.second = [0, 30];
 
@@ -28,7 +28,7 @@ function recurTask(){
 				// userRandomMessageRule.hour = Math.floor(Math.random()*23)
 
 				userRandomMessageRule.hour = 17;
-				userRandomMessageRule.minute = 5;
+				userRandomMessageRule.minute = 21;
 
 				// userReminderRule.second = [0,10,20,30,40,50]
 				// Adding 1 day in MS
@@ -41,7 +41,7 @@ function recurTask(){
 
 				var userMessageSend = schedule.scheduleJob({end: new Date(Date.now() + 86400000), rule: userRandomMessageRule}, function(){
 						// Extract and send a random past message
-						var userMessagePromise = db_utils.getRandomEntry()
+						var userMessagePromise = db_utils.getRandomEntry(id)
 						userMessagePromise.then(function(message){
 							console.log("Sending a message from the past at a random time!!")
 							facebook_parser.sendFacebookMessage(id,"Here's something from the past you were grateful for: "+ message)

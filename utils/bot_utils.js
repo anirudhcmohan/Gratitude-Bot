@@ -96,7 +96,7 @@ function parseIncomingMSGSession (user_id, messagingItem, name){
 	else if (received_message === "get entries"){
 		var entriesPromise = db_utils.getEntries(user_id)
 		entriesPromise.then(function(entries){
-			send_message = "All previous entries are:\n\n" + entries.join("\n")
+			send_message = "All previous entries are:\n\n" + entries.join("\n-")
 			console.log("All previous entries are: " + entries.join("\n"))
 			sendFacebookMessage(user_id, send_message)
 		})
