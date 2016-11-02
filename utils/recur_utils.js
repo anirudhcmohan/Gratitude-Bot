@@ -3,8 +3,8 @@ const db_utils = require('./db_utils.js');
 const schedule = require('node-schedule')
 
 var rule = new schedule.RecurrenceRule();
-rule.hour = 17;
-rule.minute = 19;
+rule.hour = 1;
+rule.minute = 0;
 
 // rule.second = [0, 30];
 
@@ -24,19 +24,23 @@ function recurTask(){
 				userReminderRule.minute = minute
 
 				var userRandomMessageRule = new schedule.RecurrenceRule();
+				// Only show random messages between 9 AM and 9 PM
+				var max = 21;
+				var min = 9;
 
-				// userRandomMessageRule.hour = Math.floor(Math.random()*23)
+				userRandomMessageRule.hour = Math.floor(Math.random()*(max - min)) + min;
 
-				userRandomMessageRule.hour = 17;
-				userRandomMessageRule.minute = 21;
+				// userRandomMessageRule.hour = 17;
+				// userRandomMessageRule.minute = 21;
 
-				// userReminderRule.second = [0,10,20,30,40,50]
-				// Adding 1 day in MS
+
+				// Adding 1 day in MS = 86400000
 
 
 				var userReminderSend = schedule.scheduleJob({end: new Date(Date.now() + 86400000), rule: userReminderRule}, function(){
 						console.log("Test! Id is: " + id + " and displaying a reminder")
-						facebook_parser.sendFacebookMessage(id,"Reminder to type in what you're grateful for!")
+						facebook_parser.sendFacebookMessage(id,"Hoping you had a lovely day! Even if you didn’t (and not all days are!), think back to everything you did today. What’s something you’re grateful for?")
+						facebook_parser.sendFacebookMessage(id,"Enter in as many things as you'd like. I'll save them all!")
 				})
 
 				var userMessageSend = schedule.scheduleJob({end: new Date(Date.now() + 86400000), rule: userRandomMessageRule}, function(){
@@ -44,7 +48,10 @@ function recurTask(){
 						var userMessagePromise = db_utils.getRandomEntry(id)
 						userMessagePromise.then(function(message){
 							console.log("Sending a message from the past at a random time!!")
-							facebook_parser.sendFacebookMessage(id,"Here's something from the past you were grateful for: "+ message)
+							facebook_parser.sendFacebookMessage(id,"Hey there, hope you’re having a lovely day.")
+							var send_message = "I wanted to remind you of something you were grateful for on "+message.createdAt.toDateString()+". You wrote the following: "
+							facebook_parser.sendFacebookMessage(id, send_message)
+							facebook_parser.sendFacebookMessage(id, message)
 						}, function(err){
 							console.log(err)
 						})

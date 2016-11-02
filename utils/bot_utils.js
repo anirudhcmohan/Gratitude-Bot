@@ -8,7 +8,7 @@ const PAGE_TOKEN = "EAAZAyQZB2isvkBAKyiiwBj2H0iMxMKMENpGHdFtLnG9cOaZB7MtCBsUcX9V
 
 const WEBHOOK_TOKEN = "a_test_token";
 
-const HELP_MESSAGE = "-get entries: See all your past entries\n-get time: See your daily reminder is (8:00PM by default)\n-set time: Set a new reminder time\n\nType in anything else, and I'll automatically add it as something you're grateful for for the day\n\nP.S. type in 'help' at any time to bring this up again"
+const HELP_MESSAGE = "-get entries: See all your past entries\n-get time: See your daily reminder time\n-set time HH:MM: Set a new reminder time in military time (it's 20:00 by default)\n\nType in anything else, and I'll automatically add it as something you're grateful for for the day\n\nP.S. type in 'help' at any time to bring this up again"
 
 // Verifies this is the appropriate server to talk to bot
 
@@ -68,66 +68,86 @@ function parseIncomingMSGSession (user_id, messagingItem, name){
 	else {
 		received_message = messagingItem.message.text	
 	}
-	if (received_message === "hi" ) {
-		send_message = "Hi back " + name + ". Echo: " + received_message
+	if (received_message.toLowerCase() === "hi" ) {
+		send_message = "Hi there, " + name + "!"
 		console.log("About to send this message " + send_message)
 		sendFacebookMessage(user_id, send_message)
 	}
-	else if (received_message.split(" ").slice(0,2).join(" ")==="set time")
+	else if (received_message.toLowerCase().split(" ").slice(0,2).join(" ")==="set time")
 	{
-		var hour = received_message.split(" ")[2].split(":")[0]
-		var minute = received_message.split(" ")[2].split(":")[1]
-		db_utils.setRecTime(user_id, hour, minute)
-		send_message = "Awesome! Your new receive time is " + hour + ":" + minute
-		console.log("About to send this message " + send_message)
-		sendFacebookMessage(user_id, send_message)
+		try {
+			var hour = parseInt(received_message.split(" ")[2].split(":")[0],10)
+			var minute = parseInt(received_message.split(" ")[2].split(":")[1],10)
+			if (isNaN(hour) || isNaN(minute)){
+				console.log(typeof hour)
+				console.log(typeof minute)
+				throw "1: Time format exception"
+			}
+			if ((hour < 0)||(hour > 23)){
+				throw "3: Time format exception"
+			}
+			if ((minute < 0)||(minute > 59)){
+				throw "4: Time format exception"
+			}
+			db_utils.setRecTime(user_id, hour, minute)
+			send_message = "Great. You'll receive a daily reminder at " + hour + ":" + minute
+			console.log("About to send this message " + send_message)
+			sendFacebookMessage(user_id, send_message)	
+		}
+		catch (e) {
+			console.log("Error in how user tried to set time! " + e)
+			sendFacebookMessage(user_id, "Be sure to use the following format: 'set time HH:MM', where HH:MM is the military time of your desired reminder time.")
+		}
+		
 	}
-	else if (received_message === "get time")
+	else if (received_message.toLowerCase() === "get time")
 	{
 		var rec_timePromise = db_utils.getRecTime(user_id)
 		rec_timePromise.then(function(rec_time){
-			send_message = "The current receive time is " + rec_time['hour'] + ":" + rec_time['minute']
+			send_message = "You're currently receiving reminders at " + rec_time['hour'] + ":" + rec_time['minute']
 			console.log("About to send this message " + send_message)
 			sendFacebookMessage(user_id, send_message)
 		}, function (err){
 			console.log("A big error!!!");
 		})
 	}
-	else if (received_message === "get entries"){
+	else if (received_message.toLowerCase() === "get entries"){
 		var entriesPromise = db_utils.getEntries(user_id)
 		entriesPromise.then(function(entries){
-			send_message = "All previous entries are:\n\n" + entries.join("\n-")
+			send_message = "Here are a few of your past entries:\n\n-" + entries.join("\n-")
 			console.log("All previous entries are: " + entries.join("\n"))
 			sendFacebookMessage(user_id, send_message)
 		})
 	}
-	else if (received_message === "delete all my entries"){
+	else if (received_message.toLowerCase() === "delete all my entries"){
 		db_utils.deleteEntries(user_id);
 		console.log("Deleted all user entries");
-		send_message = "Deleted all the user entries";
+		send_message = "This is a hidden feature! You've stumbled on it and have now deleted all of your old entries.";
 		sendFacebookMessage(user_id, send_message)
 	}
 	else if (received_message == "USER_DEFINED_PAYLOAD"){
-		send_message = "Welcome " + name + "! \n\nThis is a bot to help you practice a bit more gratitude in your life. Here's what you can type in:"
+		send_message = "Hi there, " + name + "! \n\nThanks for showing interest in practicing more gratitude in your life. Here's a bit about what you can use this bot for:"
 		sendFacebookMessage(user_id, send_message)
-		sendFacebookMessage(user_id, HELP_MESSAGE+"\n\n Enjoy being grateful!")	
+		sendFacebookMessage(user_id, HELP_MESSAGE+"\n\n")
+		// sendFacebookMessage(user_id,"If you'd like to change your daily reminder time, feel free to do it at any time.")	
 	}
-	else if (received_message === "help"){
+	else if (received_message.toLowerCase() === "help"){
 		console.log("Showing help");
 		send_message = HELP_MESSAGE;
 		sendFacebookMessage(user_id, send_message)
 	}
 	// For debugging only -- pull random entry
-	else if (received_message === "ENTRYRANDOM123"){
+	else if (received_message.toLowerCase() === "ENTRYRANDOM123"){
 		var randomEntryPromise = db_utils.getRandomEntry(user_id)
 		randomEntryPromise.then(function(randomEntry){
-			sendFacebookMessage(user_id, "Random entry " + randomEntry)
+			sendFacebookMessage(user_id, "A randoom past entry: " + randomEntry)
 		}, function(err){
 			console.log(err)
 		})
 	}
+	// TODO: Add more (hardcoded) strings in response to things people ahve entered in
 	else {
-		send_message = "Just gonna echo: " + received_message
+		send_message = "Great! I've saved that as something you're grateful for."
 		db_utils.createEntry(user_id, received_message)
 		console.log("About to send this message " + send_message)
 		sendFacebookMessage(user_id, send_message)

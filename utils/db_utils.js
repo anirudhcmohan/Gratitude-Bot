@@ -84,7 +84,7 @@ function createEntry(user_id, entryText){
 function getAndSetNewUser(user_id, rec_time_entry, name_entry, entryID_entry){
 	var name_entry = (typeof name_entry !== 'undefined') ?  name_entry : "";
 
-	var rec_time_entry = (typeof rec_time_entry !== 'undefined') ?  rec_time_entry : {"hour":8,"minute":30};
+	var rec_time_entry = (typeof rec_time_entry !== 'undefined') ?  rec_time_entry : {"hour":20,"minute":0};
 
 	var entryID_entry = (typeof entryID_entry !== 'undefined') ?  entryID_entry : null;
 
@@ -214,7 +214,7 @@ function getRandomEntry(user_id){
 			}
 			else if(result){
 				console.log("Random entry is "+ result);
-				resolve(result.text);
+				resolve(result);
 			}
 			else {
 				resolve(null);
